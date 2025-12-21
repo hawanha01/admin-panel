@@ -4,6 +4,7 @@ import pluginVue from 'eslint-plugin-vue'
 import pluginVitest from '@vitest/eslint-plugin'
 import pluginPlaywright from 'eslint-plugin-playwright'
 import pluginOxlint from 'eslint-plugin-oxlint'
+import pluginUnusedImports from 'eslint-plugin-unused-imports'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 
 // To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
@@ -21,16 +22,35 @@ export default defineConfigWithVueTs(
 
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
-  
+
   {
     ...pluginVitest.configs.recommended,
     files: ['src/**/__tests__/*'],
   },
-  
+
   {
     ...pluginPlaywright.configs['flat/recommended'],
     files: ['e2e/**/*.{test,spec}.{js,ts,jsx,tsx}'],
   },
   ...pluginOxlint.configs['flat/recommended'],
   skipFormatting,
+  {
+    plugins: {
+      'unused-imports': pluginUnusedImports,
+    },
+    rules: {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'error',
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
 )
