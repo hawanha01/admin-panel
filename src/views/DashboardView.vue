@@ -1,11 +1,21 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useDashboardStore } from '@/stores/dashboard'
+import { useAuthStore } from '@/stores/auth.store'
 import GenericCard from '@/components/generic/GenericCard.vue'
 import GenericText from '@/components/generic/GenericText.vue'
 import GenericButton from '@/components/generic/GenericButton.vue'
+import GenericPageLoader from '@/components/generic/GenericPageLoader.vue'
 
+const router = useRouter()
 const dashboardStore = useDashboardStore()
+const authStore = useAuthStore()
+
+const handleLogout = async (): Promise<void> => {
+  await authStore.logout()
+  router.push('/login')
+}
 
 onMounted(() => {
   dashboardStore.fetchAll()
@@ -42,19 +52,31 @@ const getStatusColor = (status: string): string => {
   <div class="min-h-screen bg-gray-50 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
-      <div class="mb-8">
-        <GenericText variant="h1" size="3xl" weight="bold" class="mb-2">
-          Admin Dashboard
-        </GenericText>
-        <GenericText variant="p" size="lg" color="text-gray-600">
-          Overview of your e-commerce platform
-        </GenericText>
+      <div class="mb-8 flex items-center justify-between">
+        <div>
+          <GenericText variant="h1" size="3xl" weight="bold" class="mb-2">
+            Admin Dashboard
+          </GenericText>
+          <GenericText variant="p" size="lg" color="text-gray-600">
+            Overview of your e-commerce platform
+          </GenericText>
+        </div>
+        <GenericButton
+          variant="danger"
+          size="md"
+          :loading="authStore.loading"
+          :disabled="authStore.loading"
+          @click="handleLogout"
+        >
+          Logout
+        </GenericButton>
       </div>
 
       <!-- Loading State -->
-      <div v-if="dashboardStore.loading && !dashboardStore.hasStats" class="flex justify-center items-center py-12">
-        <GenericText variant="p" color="text-gray-500">Loading dashboard data...</GenericText>
-      </div>
+      <GenericPageLoader
+        v-if="dashboardStore.loading && !dashboardStore.hasStats"
+        message="Loading dashboard data..."
+      />
 
       <!-- Error State -->
       <div v-if="dashboardStore.error" class="mb-6">
@@ -71,7 +93,10 @@ const getStatusColor = (status: string): string => {
       </div>
 
       <!-- Stats Grid -->
-      <div v-if="dashboardStore.hasStats" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div
+        v-if="dashboardStore.hasStats"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+      >
         <!-- Total Stores -->
         <GenericCard>
           <div class="flex items-center justify-between">
@@ -204,10 +229,7 @@ const getStatusColor = (status: string): string => {
                   variant="span"
                   size="xs"
                   weight="medium"
-                  :class="[
-                    'px-3 py-1 rounded-full inline-block',
-                    getStatusColor(store.status),
-                  ]"
+                  :class="['px-3 py-1 rounded-full inline-block', getStatusColor(store.status)]"
                 >
                   {{ store.status }}
                 </GenericText>
@@ -239,7 +261,13 @@ const getStatusColor = (status: string): string => {
                 <GenericText variant="p" size="sm" color="text-gray-600">
                   {{ order.storeName }}
                 </GenericText>
-                <GenericText variant="p" size="sm" weight="semibold" color="text-gray-900" class="mt-1">
+                <GenericText
+                  variant="p"
+                  size="sm"
+                  weight="semibold"
+                  color="text-gray-900"
+                  class="mt-1"
+                >
                   {{ formatCurrency(order.totalAmount) }}
                 </GenericText>
                 <GenericText variant="p" size="xs" color="text-gray-500" class="mt-1">
@@ -251,10 +279,7 @@ const getStatusColor = (status: string): string => {
                   variant="span"
                   size="xs"
                   weight="medium"
-                  :class="[
-                    'px-3 py-1 rounded-full inline-block',
-                    getStatusColor(order.status),
-                  ]"
+                  :class="['px-3 py-1 rounded-full inline-block', getStatusColor(order.status)]"
                 >
                   {{ order.status }}
                 </GenericText>
@@ -262,13 +287,10 @@ const getStatusColor = (status: string): string => {
             </div>
           </div>
           <template #actions>
-            <GenericButton variant="secondary" size="sm">
-              View All Orders
-            </GenericButton>
+            <GenericButton variant="secondary" size="sm"> View All Orders </GenericButton>
           </template>
         </GenericCard>
       </div>
     </div>
   </div>
 </template>
-
