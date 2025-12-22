@@ -93,7 +93,6 @@ const handleSubmit = async (): Promise<void> => {
       password: form.value.password,
     })
 
-    toast.success('Login successful! Redirecting...')
     setTimeout(() => {
       router.push('/dashboard')
     }, 500)
