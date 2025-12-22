@@ -29,6 +29,10 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     error.value = null
 
+    // Store role in localStorage BEFORE API call (so it persists even after logout clears cache)
+    const role = 'admin' // Admin panel always uses 'admin' role
+    localStorage.setItem('userRole', role)
+
     try {
       const response = await authApi.login(credentials)
 
