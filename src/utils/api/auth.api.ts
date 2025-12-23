@@ -9,11 +9,15 @@ import type { LoginRequest, LoginResponse, User } from '@/types/auth.types'
 export const authApi = {
   /**
    * Login user (public endpoint - no token required)
+   * Role is read from localStorage (set before API call)
    */
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
+    // Get role from localStorage (set before calling this function)
+    const role = localStorage.getItem('userRole') || 'admin'
+
     const response = await publicApi.post<LoginResponse>('/auth/login', credentials, {
       headers: {
-        'x-role': 'admin',
+        'x-role': role,
       },
     })
     return response.data
