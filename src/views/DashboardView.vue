@@ -61,15 +61,20 @@ const getStatusColor = (status: string): string => {
             Overview of your e-commerce platform
           </GenericText>
         </div>
-        <GenericButton
-          variant="danger"
-          size="md"
-          :loading="authStore.loading"
-          :disabled="authStore.loading"
-          @click="handleLogout"
-        >
-          Logout
-        </GenericButton>
+        <div class="flex gap-3">
+          <GenericButton variant="primary" size="md" @click="router.push('/invite-store-owner')">
+            Invite Store Owner
+          </GenericButton>
+          <GenericButton
+            variant="danger"
+            size="md"
+            :loading="authStore.loading"
+            :disabled="authStore.loading"
+            @click="handleLogout"
+          >
+            Logout
+          </GenericButton>
+        </div>
       </div>
 
       <!-- Loading State -->

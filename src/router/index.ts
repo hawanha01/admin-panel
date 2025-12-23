@@ -24,6 +24,14 @@ const router = createRouter({
         requiresAuth: true,
       },
     },
+    {
+      path: '/invite-store-owner',
+      name: 'InviteStoreOwner',
+      component: () => import('@/views/InviteStoreOwnerView.vue'),
+      meta: {
+        requiresAuth: true,
+      },
+    },
   ],
 })
 
