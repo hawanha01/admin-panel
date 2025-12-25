@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { DashboardStats, RecentStore, RecentOrder } from '@/types/entity.types'
+import { getErrorMessage } from '@/utils/error-handler'
 
 interface _DashboardState {
   stats: DashboardStats | null
@@ -42,7 +43,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
         pendingStores: 12,
       }
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to fetch dashboard stats'
+      error.value = getErrorMessage(err, 'Failed to fetch dashboard stats')
     } finally {
       loading.value = false
     }
@@ -83,7 +84,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
         },
       ]
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to fetch recent stores'
+      error.value = getErrorMessage(err, 'Failed to fetch recent stores')
     } finally {
       loading.value = false
     }
@@ -127,7 +128,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
         },
       ]
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to fetch recent orders'
+      error.value = getErrorMessage(err, 'Failed to fetch recent orders')
     } finally {
       loading.value = false
     }

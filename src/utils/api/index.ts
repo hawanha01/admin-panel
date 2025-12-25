@@ -15,3 +15,4 @@ export {
 // API modules
 export { authApi } from './auth.api'
 export { dashboardApi } from './dashboard.api'
+export { storeOwnerApi } from './store-owner.api'

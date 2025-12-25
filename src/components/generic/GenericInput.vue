@@ -9,6 +9,7 @@ interface Props {
   required?: boolean
   autocomplete?: string
   id?: string
+  readonly?: boolean
 }
 
 interface Emits {
@@ -21,6 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   disabled: false,
   required: false,
+  readonly: false,
 })
 
 const emit = defineEmits<Emits>()
@@ -55,14 +57,17 @@ const handleFocus = (): void => {
       :disabled="disabled"
       :required="required"
       :autocomplete="autocomplete"
+      :readonly="readonly"
       :class="[
         'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors',
         error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500',
         disabled && 'bg-gray-100 cursor-not-allowed opacity-60',
+        readonly && 'bg-gray-50 cursor-default',
       ]"
       @input="handleInput"
       @blur="handleBlur"
       @focus="handleFocus"
     />
+    <p v-if="error" class="mt-1 text-sm text-red-600">{{ error }}</p>
   </div>
 </template>

@@ -4,6 +4,7 @@ import { authApi } from '@/utils/api'
 import type { LoginRequest, User } from '@/types/auth.types'
 import { useToast } from 'vue-toastification'
 import { getUserIdFromToken } from '@/utils/jwt'
+import { getErrorMessage } from '@/utils/error-handler'
 
 export const useAuthStore = defineStore('auth', () => {
   const toast = useToast()
@@ -52,8 +53,7 @@ export const useAuthStore = defineStore('auth', () => {
         throw new Error('Invalid response from server')
       }
     } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'An error occurred during login. Please try again.'
+      const errorMessage = getErrorMessage(err, 'An error occurred during login. Please try again.')
       error.value = errorMessage
       toast.error(errorMessage)
       throw err
@@ -90,7 +90,7 @@ export const useAuthStore = defineStore('auth', () => {
         }
       }
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch user details'
+      const errorMessage = getErrorMessage(err, 'Failed to fetch user details')
       error.value = errorMessage
       toast.error(errorMessage)
     }
@@ -105,7 +105,7 @@ export const useAuthStore = defineStore('auth', () => {
       await authApi.logout()
     } catch (err: unknown) {
       // Even if API call fails, we still want to clear local storage
-      const errorMessage = err instanceof Error ? err.message : 'Failed to logout on server'
+      const errorMessage = getErrorMessage(err, 'Failed to logout on server')
       console.error('Logout API error:', errorMessage)
       // Don't show error toast - we'll still clear local storage
     } finally {
