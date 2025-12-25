@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
+import GenericButton from '@/components/generic/GenericButton.vue'
+import GenericText from '@/components/generic/GenericText.vue'
 import SidebarTab from './SidebarTab.vue'
 import type { NavigationItem } from '@/types/navigation.types'
 
@@ -9,10 +11,23 @@ interface Props {
   collapsed: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+
+// Emit event to close sidebar on mobile when route changes
+const emit = defineEmits<{ close: [] }>()
+
+// Close sidebar on mobile when route changes
+watch(
+  () => route.path,
+  () => {
+    if (window.innerWidth < 1024 && !props.collapsed) {
+      emit('close')
+    }
+  },
+)
 
 /**
  * Get all navigation items for admin panel
@@ -101,23 +116,31 @@ const handleLogout = async (): Promise<void> => {
           :key="item.id"
           :item="item"
           :collapsed="collapsed"
+          @navigate="emit('close')"
         />
       </ul>
     </div>
 
     <!-- Logout Button -->
     <div class="p-2 border-t border-gray-200">
-      <button
-        @click="handleLogout"
+      <GenericButton
+        variant="danger"
+        size="md"
+        type="button"
         :class="[
-          'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500',
-          collapsed ? 'justify-center' : 'justify-start',
+          'w-full flex items-center gap-3',
+          collapsed ? '!justify-center' : '!justify-start',
         ]"
-        :aria-label="collapsed ? 'Logout' : 'Logout'"
+        aria-label="Logout"
+        :loading="authStore.loading"
+        :disabled="authStore.loading"
+        @click="handleLogout"
       >
-        <span class="text-xl">🚪</span>
-        <span v-if="!collapsed" class="font-medium">Logout</span>
-      </button>
+        <span class="text-xl flex-shrink-0">🚪</span>
+        <GenericText v-if="!collapsed" variant="span" size="md" weight="medium" color="text-white">
+          Logout
+        </GenericText>
+      </GenericButton>
     </div>
   </nav>
 </template>
