@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,19 +19,83 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/DashboardView.vue'),
+      component: AdminLayout,
       meta: {
         requiresAuth: true,
       },
+      children: [
+        {
+          path: '',
+          name: 'Dashboard',
+          component: () => import('@/views/DashboardView.vue'),
+        },
+      ],
     },
     {
-      path: '/invite-store-owner',
-      name: 'InviteStoreOwner',
-      component: () => import('@/views/InviteStoreOwnerView.vue'),
+      path: '/stores',
+      component: AdminLayout,
       meta: {
         requiresAuth: true,
       },
+      children: [
+        {
+          path: '',
+          name: 'Stores',
+          component: () => import('@/views/StoresView.vue'),
+        },
+      ],
+    },
+    {
+      path: '/store-owners',
+      component: AdminLayout,
+      meta: {
+        requiresAuth: true,
+      },
+      children: [
+        {
+          path: '',
+          name: 'StoreOwners',
+          component: () => import('@/views/StoreOwnersView.vue'),
+        },
+        {
+          path: 'invite',
+          name: 'InviteStoreOwner',
+          component: () => import('@/views/InviteStoreOwnerView.vue'),
+        },
+        {
+          path: 'managers',
+          name: 'StoreManagers',
+          component: () => import('@/views/StoreManagersView.vue'),
+        },
+      ],
+    },
+    {
+      path: '/products',
+      component: AdminLayout,
+      meta: {
+        requiresAuth: true,
+      },
+      children: [
+        {
+          path: '',
+          name: 'Products',
+          component: () => import('@/views/ProductsView.vue'),
+        },
+      ],
+    },
+    {
+      path: '/orders',
+      component: AdminLayout,
+      meta: {
+        requiresAuth: true,
+      },
+      children: [
+        {
+          path: '',
+          name: 'Orders',
+          component: () => import('@/views/OrdersView.vue'),
+        },
+      ],
     },
   ],
 })
@@ -52,7 +117,7 @@ router.beforeEach((to, from, next) => {
     next({ name: 'Login', query: { redirect: to.fullPath } })
   } else if (isLoginRoute && authStore.isAuthenticated) {
     // Redirect to dashboard if user is already authenticated and trying to access login
-    next({ name: 'Dashboard' })
+    next({ path: '/dashboard' })
   } else {
     next()
   }
