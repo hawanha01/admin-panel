@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import GenericText from '@/components/generic/GenericText.vue'
+import GenericButton from '@/components/generic/GenericButton.vue'
 
 interface Props {
   collapsed: boolean
@@ -49,29 +50,30 @@ const logoSize = computed(() => {
         variant="h2"
         size="xl"
         weight="bold"
-        class="text-gray-900 whitespace-nowrap"
+        color="text-gray-900"
+        class="whitespace-nowrap"
       >
         Admin Panel
       </GenericText>
     </div>
 
     <!-- Toggle Button -->
-    <button
-      @click="handleToggle"
-      class="p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <GenericButton
+      variant="secondary"
+      size="sm"
+      type="button"
+      :class="['p-2 !min-w-0', collapsed ? '' : '[&>svg]:rotate-180']"
       :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+      @click="handleToggle"
     >
       <svg
-        :class="[
-          'w-5 h-5 text-gray-600 transition-transform duration-300',
-          collapsed ? '' : 'rotate-180',
-        ]"
+        class="w-5 h-5 text-gray-600 transition-transform duration-300"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
       >
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
-    </button>
+    </GenericButton>
   </div>
 </template>
